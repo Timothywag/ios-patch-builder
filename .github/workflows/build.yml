@@ -1,0 +1,23 @@
+name: Build Dylib
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Compile ARM64 Dylib
+        run: |
+          xcrun -sdk iphoneos clang -dynamiclib -arch arm64 \
+            -install_name @executable_path/Frameworks/patch.dylib \
+            patch.c -o patch.dylib
+
+      - name: Upload Dylib Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: patch-dylib
+          path: patch.dylib
